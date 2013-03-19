@@ -2,8 +2,12 @@
 <classpath>
 	<classpathentry kind="src" output="target/classes" path="src/main/java"/>
 	<classpathentry kind="src" output="target/test-classes" path="src/test/java"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.5"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
 	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER"/>
 	<classpathentry kind="lib" path="/Users/darer121/Documents/Projects/ES_Cloud_Group/client/src/libs/org.opennebula.client.jar"/>
+	<classpathentry kind="lib" path="/Users/darer121/Documents/Projects/ES_Cloud_Group/client/src/libs/ws-commons-util-1.0.2.jar"/>
+	<classpathentry kind="lib" path="/Users/darer121/Documents/Projects/ES_Cloud_Group/client/src/libs/xmlrpc-client-3.1.2.jar"/>
+	<classpathentry kind="lib" path="/Users/darer121/Documents/Projects/ES_Cloud_Group/client/src/libs/xmlrpc-common-3.1.2.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.launching.macosx.MacOSXType/JVM Contents (MacOS X Default)"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
