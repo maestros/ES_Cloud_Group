@@ -1,8 +1,0 @@
-client/bin/
-client/target/
-client/target/classes/
-client/target/classes/META-INF/maven/client/client/pom.properties
-client/target/classes/META-INF/maven/client/client/pom.xml
-client/.settings
-.DS_Store
-.gitignore
