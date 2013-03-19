@@ -3,6 +3,7 @@ package client;
 import java.util.Iterator;
 
 import org.opennebula.client.Client;
+import org.opennebula.client.OneResponse;
 import org.opennebula.client.host.Host;
 import org.opennebula.client.host.HostPool;
 import org.opennebula.client.template.TemplatePool;
@@ -23,13 +24,13 @@ public class OpenNebulaConnection {
 			macPool = new VirtualMachinePool(cli);
 			hostPool = new HostPool(cli);
 
-//			String s = "CPU=\"1\" DISK=[ IMAGE=\"dsl_root\", IMAGE_UNAME=\"oneadmin\", TARGET=\"hda\" ] GRAPHICS=[ LISTEN=\"localhost\", PASSWD=\"password\", PORT=\"6666\", TYPE=\"vnc\" ] MEMORY=\"512\" NAME=\"DSL_Template_01\" OS=[ ARCH=\"i686\", BOOT=\"hd\" ] RAW=[ TYPE=\"kvm\" ] TEMPLATE_ID=\"15\" VCPU=\"1\"";
+			// String s =
+			// "CPU=\"1\" DISK=[ IMAGE=\"dsl_root\", IMAGE_UNAME=\"oneadmin\", TARGET=\"hda\" ] GRAPHICS=[ LISTEN=\"localhost\", PASSWD=\"password\", PORT=\"6666\", TYPE=\"vnc\" ] MEMORY=\"512\" NAME=\"DSL_Template_01\" OS=[ ARCH=\"i686\", BOOT=\"hd\" ] RAW=[ TYPE=\"kvm\" ] TEMPLATE_ID=\"15\" VCPU=\"1\"";
 			// System.out.println(VirtualMachine.allocate(cli,
 			// s).getErrorMessage());
 
-//			System.out.println(macPool.monitoring(VirtualMachinePool.ALL)
-//					.getMessage());
-
+//			System.out.println(hostPool.monitoring().getMessage());
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -67,7 +68,17 @@ public class OpenNebulaConnection {
 		macPool.info();
 		return macPool.iterator();
 	}
-	
+
+	/**
+	 * Returns the response of the monitoring poll for the VMs.
+	 * 
+	 * @return
+	 */
+	public OneResponse getAllVMStates() {
+		macPool.info();
+		return macPool.monitoring(VirtualMachinePool.ALL_VM);
+	}
+
 	/**
 	 * Returns the specified host.
 	 * 
@@ -78,7 +89,7 @@ public class OpenNebulaConnection {
 		hostPool.info();
 		return hostPool.getById(id);
 	}
-	
+
 	/**
 	 * Returns an iterator over all the hosts in the cloud.
 	 * 
@@ -87,6 +98,16 @@ public class OpenNebulaConnection {
 	public Iterator<Host> getAllHosts() {
 		hostPool.info();
 		return hostPool.iterator();
+	}
+
+	/**
+	 * Returns the response of the monitoring poll for the hosts.
+	 * 
+	 * @return
+	 */
+	public OneResponse getAllHostStates() {
+		hostPool.info();
+		return hostPool.monitoring();
 	}
 
 }
