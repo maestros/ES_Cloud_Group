@@ -47,6 +47,34 @@ public class OpenNebulaConnection {
 			String secret, String target) {
 		return new OpenNebulaConnection(secret, target);
 	}
+	
+	/**
+	 * Will deploy the given template as a VM.
+	 * 
+	 * @param template
+	 * @return
+	 */
+	public OneResponse deployVM(String template) {
+		return VirtualMachine.allocate(cli, template);
+	}
+	
+	/**
+	 * Will migrate a VM to the new specified host. 
+	 * Can specifiy a live migration.
+	 * 
+	 * @param vmID
+	 * @param newHostID
+	 * @param live
+	 * @return
+	 */
+	public OneResponse migrateVM(int vmID, int newHostID, boolean live) {
+		macPool.info();
+		if (live) {
+			return macPool.getById(vmID).liveMigrate(newHostID);
+		} else {
+			return macPool.getById(vmID).migrate(newHostID);
+		}
+	}
 
 	/**
 	 * Returns a VM with the specified ID.

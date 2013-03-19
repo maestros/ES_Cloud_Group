@@ -25,6 +25,7 @@ public class MachineMonitor {
 		// }
 
 		try {
+			System.out.println("\nVMS:\n");
 			List<MachineState> vmStates = vmm.getVMStates();
 			for (MachineState ms : vmStates) {
 				System.out.println(ms);
@@ -34,6 +35,7 @@ public class MachineMonitor {
 		}
 
 		try {
+			System.out.println("\nHOSTS:\n");
 			List<MachineState> hostStates = vmm.getHostStates();
 			for (MachineState ms : hostStates) {
 				System.out.println(ms);
@@ -71,6 +73,16 @@ public class MachineMonitor {
 		OpenNebulaConnection conn = OpenNebulaConnection
 				.openNebulaConnectionFactory(secret, target);
 		return new MachineMonitor(conn);
+	}
+	
+	public boolean migrateVM(int vmID, int newHostID, boolean live) throws IllegalMachineStateException {
+		OneResponse res = conn.migrateVM(vmID, newHostID, live);
+		
+		if (res.isError()) {
+			throw new IllegalMachineStateException("VM failed to migrate: " + res.getErrorMessage());
+		}
+		
+		return true;
 	}
 
 	/**
@@ -140,62 +152,6 @@ public class MachineMonitor {
 			}
 		}
 	}
-
-	// /**
-	// * Returns the RAM usage of the specified VM.
-	// *
-	// * @param vmID
-	// * @return
-	// */
-	// public double getVMRAMUsage(int vmID) throws IllegalMachineStateException
-	// {
-	// VirtualMachine vm = conn.getVM(vmID);
-	// vm.info();
-	// OneResponse res = vm.monitoring();
-	//
-	// if (res.isError()) {
-	// throw new IllegalMachineStateException("Response error from VM: "
-	// + res.getErrorMessage());
-	// } else {
-	// HashMap<Integer, HashMap<String, String>> parsedXML = XMLParser
-	// .parseXMLString(res.getMessage());
-	// HashMap<String, String> vmState = parsedXML.get(vmID);
-	// if (vmState == null) {
-	// throw new IllegalMachineStateException("VM: " + vmID
-	// + " DOES NOT EXIST");
-	// } else {
-	// return Double.parseDouble(vmState.get(RAM_USAGE));
-	// }
-	// }
-	// }
-	//
-	// /**
-	// * Returns the HD usage of the specified VM.
-	// *
-	// * @param vmID
-	// * @return
-	// */
-	// public double getVMHDUsage(int vmID) throws IllegalMachineStateException
-	// {
-	// VirtualMachine vm = conn.getVM(vmID);
-	// vm.info();
-	// OneResponse res = vm.monitoring();
-	//
-	// if (res.isError()) {
-	// throw new IllegalMachineStateException("Response error from VM: "
-	// + res.getErrorMessage());
-	// } else {
-	// HashMap<Integer, HashMap<String, String>> parsedXML = XMLParser
-	// .parseXMLString(res.getMessage());
-	// HashMap<String, String> vmState = parsedXML.get(vmID);
-	// if (vmState == null) {
-	// throw new IllegalMachineStateException("VM: " + vmID
-	// + " DOES NOT EXIST");
-	// } else {
-	// return Double.parseDouble(vmState.get(HD_USAGE));
-	// }
-	// }
-	// }
 
 	/**
 	 * Returns the resource usage of all VMs.
@@ -271,62 +227,6 @@ public class MachineMonitor {
 			}
 		}
 	}
-
-	// /**
-	// * Returns the RAM usage of the specified Host.
-	// *
-	// * @param vmID
-	// * @return
-	// */
-	// public double getHostRAMUsage(int hostID)
-	// throws IllegalMachineStateException {
-	// Host host = conn.getHost(hostID);
-	// host.info();
-	// OneResponse res = host.monitoring();
-	//
-	// if (res.isError()) {
-	// throw new IllegalMachineStateException("Response error from Host: "
-	// + res.getErrorMessage());
-	// } else {
-	// HashMap<Integer, HashMap<String, String>> parsedXML = XMLParser
-	// .parseXMLString(res.getMessage());
-	// HashMap<String, String> hostState = parsedXML.get(hostID);
-	// if (hostState == null) {
-	// throw new IllegalMachineStateException("Host: " + hostID
-	// + " DOES NOT EXIST");
-	// } else {
-	// return Double.parseDouble(hostState.get(RAM_USAGE));
-	// }
-	// }
-	// }
-	//
-	// /**
-	// * Returns the HD usage of the specified Host.
-	// *
-	// * @param vmID
-	// * @return
-	// */
-	// public double getHostHDUsage(int hostID)
-	// throws IllegalMachineStateException {
-	// Host host = conn.getHost(hostID);
-	// host.info();
-	// OneResponse res = host.monitoring();
-	//
-	// if (res.isError()) {
-	// throw new IllegalMachineStateException("Response error from Host: "
-	// + res.getErrorMessage());
-	// } else {
-	// HashMap<Integer, HashMap<String, String>> parsedXML = XMLParser
-	// .parseXMLString(res.getMessage());
-	// HashMap<String, String> hostState = parsedXML.get(hostID);
-	// if (hostState == null) {
-	// throw new IllegalMachineStateException("Host: " + hostID
-	// + " DOES NOT EXIST");
-	// } else {
-	// return Double.parseDouble(hostState.get(HD_USAGE));
-	// }
-	// }
-	// }
 
 	/**
 	 * returns a new VMstat representation.
