@@ -1,12 +1,10 @@
 package model;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Blade {
-	
-	private Long ID;
+
+    private Long ID;
     private boolean on;
 
     private final double memory_total_Installed_MB;
@@ -17,11 +15,11 @@ public class Blade {
     private List<Double> networkUsage_history;
 
     private double memoryUsage_current_MB;
-	private double diskUsage_current_GB;
+    private double diskUsage_current_GB;
 
     private Map<Long, VM> vms;
 
-    public Blade(Long ID, double memory_total, double memoryUsage_current_MB, double disk_total_GB, double diskUsage_current_GB, double networkBandwidthUsed_KBs,  boolean on, double maximumNetworkBandwidth_KBs) {
+    public Blade(Long ID, double memory_total, double memoryUsage_current_MB, double disk_total_GB, double diskUsage_current_GB, double networkBandwidthUsed_KBs, boolean on, double maximumNetworkBandwidth_KBs) {
         this.ID = ID;
         this.memory_total_Installed_MB = memory_total;
         this.memoryUsage_current_MB = memoryUsage_current_MB;
@@ -41,6 +39,98 @@ public class Blade {
         this.diskUsage_current_GB = blade.diskUsage_current_GB;
         this.vms = blade.vms;
         this.on = blade.on;
+    }
+    public List<VM> getDecSortedVMList(Overload factor) {
+        switch (factor) {
+            case CPU:
+                return getDecSortedVMList_CPU();
+            case NETWORK:
+                return getDecSortedVMList_NETWORK();
+            case MEMORY:
+                return getDecSortedVMList_MEMORY();
+            case DISK:
+                return getDecSortedVMList_DISK();
+            default:
+                System.out.println("PROBLEM !!");
+                return null;
+
+        }
+    }
+
+    private List<VM> getDecSortedVMList_CPU() {
+        List<VM> list = new ArrayList<VM>(this.getVMs().values());
+        Collections.sort(list, new Comparator<VM>() {
+            public int compare(VM vm1, VM vm2) {
+                if (vm1.getAvCpuUsage() > vm2.getAvCpuUsage())
+                    return 1;
+                else
+                    return -1;
+            }
+
+        });
+        Collections.reverse(list);
+        return list;
+    }
+
+    private List<VM> getDecSortedVMList_NETWORK() {
+        List<VM> list = new ArrayList<VM>(this.getVMs().values());
+        Collections.sort(list, new Comparator<VM>() {
+            public int compare(VM vm1, VM vm2) {
+                if (vm1.getAvNetworkUsage() > vm2.getAvNetworkUsage())
+                    return 1;
+                else
+                    return -1;
+            }
+
+        });
+        Collections.reverse(list);
+        return list;
+    }
+
+    private List<VM> getDecSortedVMList_MEMORY() {
+        List<VM> list = new ArrayList<VM>(this.getVMs().values());
+        Collections.sort(list, new Comparator<VM>() {
+            public int compare(VM vm1, VM vm2) {
+                if (vm1.getMemoryUsage_MB() > vm2.getMemoryUsage_MB())
+                    return 1;
+                else
+                    return -1;
+            }
+
+        });
+        Collections.reverse(list);
+        return list;
+    }
+
+    private List<VM> getDecSortedVMList_DISK() {
+        List<VM> list = new ArrayList<VM>(this.getVMs().values());
+        Collections.sort(list, new Comparator<VM>() {
+            public int compare(VM vm1, VM vm2) {
+                if (vm1.getDiskUsage_GB() > vm2.getDiskUsage_GB())
+                    return 1;
+                else
+                    return -1;
+            }
+
+        });
+        Collections.reverse(list);
+        return list;
+    }
+
+    public boolean isMoveOk(VM vm) {
+
+        if (this.isOn() == false)
+            return false;
+
+        if (this.getAvCpuUsage() + vm.getAvCpuUsage() < 0.70
+                && this.getAvNetworkUsage() + vm.getAvNetworkUsage() < this.getMaximumNetworkBandwidth_KBs()
+                && this.getMemoryUsage_current_MB() + vm.getMemoryUsage_MB() < this.getMemory_total_Installed_MB()
+                && this.getDiskUsage_current_GB() + vm.getDiskUsage_GB() < this.getDisk_total_GB()) {
+            return true;
+        } else {
+            System.out.println("couldnt move vm " + vm.getID() + " to blade " + this.getID());
+            return false;
+        }
     }
 
     public double getBandwidthUsedPercentage() {
@@ -64,7 +154,7 @@ public class Blade {
     }
 
     public double getAvCpuUsage() {
-        if (!cpuUsage_history.isEmpty())
+        if (cpuUsage_history.isEmpty())
             return 0;
 
         double total = 0;
@@ -80,7 +170,7 @@ public class Blade {
     }
 
     public Double getAvNetworkUsage() {
-        if (!networkUsage_history.isEmpty())
+        if (networkUsage_history.isEmpty())
             return new Double(0);
 
         Double total = new Double(0);
@@ -99,36 +189,36 @@ public class Blade {
     }
 
     public Long getID() {
-		return ID;
-	}
+        return ID;
+    }
 
-	public void setID(Long iD) {
-		ID = iD;
-	}
+    public void setID(Long iD) {
+        ID = iD;
+    }
 
-	public double getMemory_total_Installed_MB() {
-		return memory_total_Installed_MB;
-	}
+    public double getMemory_total_Installed_MB() {
+        return memory_total_Installed_MB;
+    }
 
-	public double getMemoryUsage_current_MB() {
-		return memoryUsage_current_MB;
-	}
+    public double getMemoryUsage_current_MB() {
+        return memoryUsage_current_MB;
+    }
 
-	public void setMemoryUsage_current_MB(double memoryUsage_current_MB) {
-		this.memoryUsage_current_MB = memoryUsage_current_MB;
-	}
+    public void setMemoryUsage_current_MB(double memoryUsage_current_MB) {
+        this.memoryUsage_current_MB = memoryUsage_current_MB;
+    }
 
-	public double getDisk_total_GB() {
-		return disk_total_GB;
-	}
+    public double getDisk_total_GB() {
+        return disk_total_GB;
+    }
 
-	public double getDiskUsage_current_GB() {
-		return diskUsage_current_GB;
-	}
+    public double getDiskUsage_current_GB() {
+        return diskUsage_current_GB;
+    }
 
-	public void setDiskUsage_current_GB(double diskUsage_current_GB) {
-		this.diskUsage_current_GB = diskUsage_current_GB;
-	}
+    public void setDiskUsage_current_GB(double diskUsage_current_GB) {
+        this.diskUsage_current_GB = diskUsage_current_GB;
+    }
 
 
     public void addVM(VM vm) {
@@ -138,13 +228,13 @@ public class Blade {
     public VM removeVM(Long vmId) {
         return this.vms.remove(vmId);
     }
-    
+
     public boolean hasVMs() {
-    	return !this.vms.isEmpty();
+        return !this.vms.isEmpty();
     }
-    
-    public Map<Long,VM> getVMs() {
-    	return this.vms;
+
+    public Map<Long, VM> getVMs() {
+        return this.vms;
     }
 
 }

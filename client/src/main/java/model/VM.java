@@ -1,5 +1,6 @@
 package model;
 
+
 import java.util.List;
 
 public class VM {
@@ -10,7 +11,7 @@ public class VM {
     private final double diskUsage_GB;
 
     private List<Double> cpuUsage_history;
-    private List<Double> networkUsage_history_KBs;
+    private List<Double> networkUsage_history;
 
     private long hostId;
     public static final int windowSize = 100;
@@ -22,7 +23,7 @@ public class VM {
         this.memoryUsage_MB = memoryUsage;
         this.diskUsage_GB = diskUsage;
         this.cpuUsage_history = new MetricQueue<Double>(windowSize);
-        this.networkUsage_history_KBs = new MetricQueue<Double>(windowSize);
+        this.networkUsage_history = new MetricQueue<Double>(windowSize);
     }
 
 
@@ -32,8 +33,19 @@ public class VM {
         cpuUsage_history.add(cpuUsage_current);
     }
 
+    public Double getAvNetworkUsage() {
+        if (this.networkUsage_history.isEmpty())
+            return new Double(0);
+
+        Double total = new Double(0);
+        for (Double value : networkUsage_history)
+            total += value;
+
+        return total / networkUsage_history.size();
+    }
+
     public double getAvCpuUsage() {
-        if (!cpuUsage_history.isEmpty())
+        if (cpuUsage_history.isEmpty())
             return 0;
 
         double total = 0;
@@ -53,19 +65,10 @@ public class VM {
         this.hostId = hostId;
     }
     public void addNetworkUsageDataPoint(Double networkUsage_current) {
-        networkUsage_history_KBs.add(networkUsage_current);
+        networkUsage_history.add(networkUsage_current);
     }
 
-    public Double getAvNetworkUsage() {
-        if (!networkUsage_history_KBs.isEmpty())
-            return new Double(0);
 
-        Double total = new Double(0);
-        for (Double value : networkUsage_history_KBs)
-            total += value;
-
-        return total / networkUsage_history_KBs.size();
-    }
 
     public Long getID() {
         return ID;

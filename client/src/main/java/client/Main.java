@@ -1,5 +1,6 @@
 package client;
 
+import java.util.HashMap;
 import java.util.Map;
 import model.Blade;
 import model.Cloud;
@@ -27,7 +28,7 @@ public class Main {
 		setupServer();
 		
 		setupCloud();
-		
+	
 		client.sendToServer(cloud);
 		/*
 		Gson gson = new Gson();
@@ -73,8 +74,9 @@ public class Main {
 				networkBandwidthUsed_KBs,
 				on,
 				maximumNetworkBandwidth_KBs);
+	
+		cloud.setBlade(id, blade);	
 		
-		cloud.setBlade(id, blade);
 		/****************************/
 	}
 	
