@@ -1,17 +1,18 @@
 package model;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class Cloud {
 	
 	private Map<Long,Blade> blades;
 	
-	public void setBlades(Map<Long, Blade> blades) {
-		this.blades = blades;
+	public void setBlade(Long id, Blade blade) {
+		blades.put(id, blade);
 	}
 
-	public Cloud(Map<Long,Blade> blades) {
-		this.blades = blades;
+	public Cloud() {
+		this.blades = new HashMap<Long,Blade>();
 	}
 	
 	public Map<Long, Blade> getBlades() {
