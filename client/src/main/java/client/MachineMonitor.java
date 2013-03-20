@@ -25,19 +25,22 @@ public class MachineMonitor {
 	private static final String HOST_CPU_FREE = "FREE_CPU";
 	private static final String HOST_RAM_FREE = "FREE_MEM";
 	private static final String HOST_HD_FREE = "FREE_DISK";
+	private static final String MAX_CPU = "MAX_CPU";
+	private static final String MAX_RAM = "MAX_MEM";
+	private static final String MAX_HD = "MAX_DISK";
+
 	private static Logger LOG;
-	
+
 	{
 		LOG = Logger.getLogger(MachineMonitor.class.getCanonicalName());
 		LOG.setLevel(Main.getLogLevel());
 	}
-	
+
 	public static void main(String[] args) {
 		// VMMonitor vmm = VMMonitor.VMMonitorFactory("oneadmin:password",
 		// "http://147.188.195.213:2633/RPC2");
 		MachineMonitor vmm = MachineMonitor.VMMonitorFactory(
 				"oneadmin:password", "http://localhost:2633/RPC2");
-
 
 		try {
 			System.out.println("\nVMS:\n");
@@ -79,8 +82,8 @@ public class MachineMonitor {
 			_MMinstance = new MachineMonitor(conn);
 		return _MMinstance;
 	}
-	
-	public static MachineMonitor getInstance(){
+
+	public static MachineMonitor getInstance() {
 		return _MMinstance;
 	}
 
@@ -125,7 +128,8 @@ public class MachineMonitor {
 					vmStates.add(new MachineState(key, Double
 							.parseDouble(vmState.get(VM_CPU_USAGE)), Double
 							.parseDouble(vmState.get(VM_RAM_USAGE)), Double
-							.parseDouble(vmState.get(VM_HD_USAGE)), -1, -1, -1));
+							.parseDouble(vmState.get(VM_HD_USAGE)), -1.0, -1.0,
+							-1.0, -1.0, -1.0, -1.0));
 				}
 			}
 		}
@@ -159,7 +163,7 @@ public class MachineMonitor {
 				return new MachineState(vmID, Double.parseDouble(vmState
 						.get(VM_CPU_USAGE)), Double.parseDouble(vmState
 						.get(VM_RAM_USAGE)), Double.parseDouble(vmState
-						.get(VM_HD_USAGE)), -1, -1, -1);
+						.get(VM_HD_USAGE)), -1.0, -1.0, -1.0, -1.0, -1.0, -1.0);
 			}
 		}
 	}
@@ -197,7 +201,10 @@ public class MachineMonitor {
 							.parseDouble(hostState.get(HOST_HD_USAGE)), Double
 							.parseDouble(hostState.get(HOST_CPU_FREE)), Double
 							.parseDouble(hostState.get(HOST_RAM_FREE)), Double
-							.parseDouble(hostState.get(HOST_HD_FREE))));
+							.parseDouble(hostState.get(HOST_HD_FREE)), Double
+							.parseDouble(hostState.get(MAX_CPU)), Double
+							.parseDouble(hostState.get(MAX_RAM)), Double
+							.parseDouble(hostState.get(MAX_HD))));
 				}
 			}
 		}
@@ -234,7 +241,10 @@ public class MachineMonitor {
 						.get(HOST_HD_USAGE)), Double.parseDouble(hostState
 						.get(HOST_CPU_FREE)), Double.parseDouble(hostState
 						.get(HOST_RAM_FREE)), Double.parseDouble(hostState
-						.get(HOST_HD_FREE)));
+						.get(HOST_HD_FREE)), Double.parseDouble(hostState
+						.get(MAX_CPU)), Double.parseDouble(hostState
+						.get(MAX_RAM)), Double.parseDouble(hostState
+						.get(MAX_HD)));
 			}
 		}
 	}
@@ -284,10 +294,11 @@ public class MachineMonitor {
 	 * @param hdUsage
 	 * @return
 	 */
-	public MachineState newVMState(int ID, double cpuUsage, double ramUsage,
-			double hdUsage, double cpuFree, double ramFree, double hdFree) {
+	public MachineState newVMState(long ID, double cpuUsage, double ramUsage,
+			double hdUsage, double cpuFree, double ramFree, double hdFree,
+			double maxCPU, double maxRam, double maxHD) {
 		return new MachineState(ID, cpuUsage, ramUsage, hdUsage, cpuFree,
-				ramFree, hdFree);
+				ramFree, hdFree, maxCPU, maxRam, maxHD);
 	}
 
 	/**
@@ -296,8 +307,8 @@ public class MachineMonitor {
 	 * @author darer121
 	 * 
 	 */
-	class MachineState {
-		public final int ID;
+	public class MachineState {
+		public final Long ID;
 		public final double cpuUsage;
 		public final double ramUsage;
 		public final double hdUsage;
@@ -306,9 +317,15 @@ public class MachineMonitor {
 		public final double ramFree;
 		public final double hdFree;
 
-		private MachineState(final int ID, final double cpuUsage,
+		public final double maxCPU;
+		public final double maxRam;
+		public final double maxHD;
+
+		private MachineState(final long ID, final double cpuUsage,
 				final double ramUsage, final double hdUsage,
-				final double cpuFree, final double ramFree, final double hdFree) {
+				final double cpuFree, final double ramFree,
+				final double hdFree, final double maxCPU, final double maxRam,
+				final double maxHD) {
 			this.ID = ID;
 			this.cpuUsage = cpuUsage;
 			this.ramUsage = ramUsage;
@@ -317,6 +334,10 @@ public class MachineMonitor {
 			this.cpuFree = cpuFree;
 			this.ramFree = ramFree;
 			this.hdFree = hdFree;
+
+			this.maxCPU = maxCPU;
+			this.maxRam = maxRam;
+			this.maxHD = maxHD;
 		}
 
 		@Override
