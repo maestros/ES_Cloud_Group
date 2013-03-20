@@ -10,7 +10,7 @@ import org.opennebula.client.host.Host;
 import org.opennebula.client.vm.VirtualMachine;
 
 public class MachineMonitor {
-	
+
 	private static MachineMonitor _MMinstance;
 	private OpenNebulaConnection conn;
 	private static final String VM_CPU_USAGE = "CPU";
@@ -22,7 +22,7 @@ public class MachineMonitor {
 	private static final String HOST_CPU_FREE = "FREE_CPU";
 	private static final String HOST_RAM_FREE = "FREE_MEM";
 	private static final String HOST_HD_FREE = "FREE_DISK";
-	
+
 	public static void main(String[] args) {
 		// VMMonitor vmm = VMMonitor.VMMonitorFactory("oneadmin:password",
 		// "http://147.188.195.213:2633/RPC2");
@@ -71,19 +71,21 @@ public class MachineMonitor {
 	public static MachineMonitor VMMonitorFactory(String secret, String target) {
 		OpenNebulaConnection conn = OpenNebulaConnection
 				.openNebulaConnectionFactory(secret, target);
-		
-		if(_MMinstance==null)
+
+		if (_MMinstance == null)
 			_MMinstance = new MachineMonitor(conn);
 		return _MMinstance;
 	}
-	
-	public boolean migrateVM(int vmID, int newHostID, boolean live) throws IllegalMachineStateException {
+
+	public boolean migrateVM(int vmID, int newHostID, boolean live)
+			throws IllegalMachineStateException {
 		OneResponse res = conn.migrateVM(vmID, newHostID, live);
-		
+
 		if (res.isError()) {
-			throw new IllegalMachineStateException("VM failed to migrate: " + res.getErrorMessage());
+			throw new IllegalMachineStateException("VM failed to migrate: "
+					+ res.getErrorMessage());
 		}
-		
+
 		return true;
 	}
 
@@ -231,6 +233,42 @@ public class MachineMonitor {
 	}
 
 	/**
+	 * Disables the specified host.
+	 * 
+	 * @param hostID
+	 * @return
+	 * @throws IllegalMachineStateException
+	 */
+	public boolean disableHost(int hostID) throws IllegalMachineStateException {
+		OneResponse res = conn.disableHost(hostID);
+
+		if (res.isError()) {
+			throw new IllegalMachineStateException(
+					"Host could not be disabled: " + res.getErrorMessage());
+		}
+
+		return true;
+	}
+
+	/**
+	 * Enables the specified host.
+	 * 
+	 * @param hostID
+	 * @return
+	 * @throws IllegalMachineStateException
+	 */
+	public boolean enableHost(int hostID) throws IllegalMachineStateException {
+		OneResponse res = conn.enableHost(hostID);
+
+		if (res.isError()) {
+			throw new IllegalMachineStateException(
+					"Host could not be enabled: " + res.getErrorMessage());
+		}
+
+		return true;
+	}
+
+	/**
 	 * returns a new VMstat representation.
 	 * 
 	 * @param ID
@@ -276,8 +314,9 @@ public class MachineMonitor {
 
 		@Override
 		public String toString() {
-			return "Machine " + ID + ": CPU_USED=" + cpuUsage + " RAM_USED=" + ramUsage
-					+ " HD_USED=" + hdUsage + " CPU_FREE=" + cpuFree + " RAM_FREE=" + ramFree + " HD_FREE=" + hdFree;
+			return "Machine " + ID + ": CPU_USED=" + cpuUsage + " RAM_USED="
+					+ ramUsage + " HD_USED=" + hdUsage + " CPU_FREE=" + cpuFree
+					+ " RAM_FREE=" + ramFree + " HD_FREE=" + hdFree;
 		}
 	}
 

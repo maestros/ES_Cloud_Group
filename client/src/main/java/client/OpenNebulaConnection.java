@@ -140,5 +140,27 @@ public class OpenNebulaConnection {
 		hostPool.info();
 		return hostPool.monitoring();
 	}
+	
+	/**
+	 * Disables a host.
+	 * 
+	 * @param hostID
+	 * @return
+	 */
+	public OneResponse disableHost(int hostID) {
+		hostPool.info();
+		return hostPool.getById(hostID).disable();
+	}
+	
+	/**
+	 * Enables a host.
+	 * 
+	 * @param hostID
+	 * @return
+	 */
+	public OneResponse enableHost(int hostID) {
+		hostPool.info();
+		return hostPool.getById(hostID).enable();
+	}
 
 }
