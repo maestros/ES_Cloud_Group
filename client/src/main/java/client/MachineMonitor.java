@@ -29,12 +29,6 @@ public class MachineMonitor {
 		MachineMonitor vmm = MachineMonitor.VMMonitorFactory(
 				"oneadmin:password", "http://localhost:2633/RPC2");
 
-		// try {
-		// MachineState ms = vmm.getVMState(115);
-		// System.out.println(ms);
-		// } catch (IllegalMachineStateException e) {
-		// e.printStackTrace();
-		// }
 
 		try {
 			System.out.println("\nVMS:\n");
