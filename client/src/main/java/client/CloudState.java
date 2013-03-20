@@ -20,7 +20,7 @@ public class CloudState {
 	private List<MachineState> vmStates;
 	private List<MachineState> hostStates;
 	
-	private List<Blade> blades;
+	//private List<Blade> blades;
 	
 	{
 		LOG = Logger.getLogger(CloudState.class.getCanonicalName());
@@ -30,30 +30,32 @@ public class CloudState {
 	private CloudState(){
 		cloud = new Cloud();
 		vmMonitor = MachineMonitor.VMMonitorFactory(secret, target);
-		blades = new ArrayList<Blade>();
+		//blades = new ArrayList<Blade>();
 		
-		/***** Simulation FIXME ******/
+		this.updateState();
 		
-		long id = 1;
-		double memory_total = 100;
-		double memoryUsage_current_MB = 50;
-		double disk_total_GB = 100;
-		double diskUsage_current_GB = 50;
-		double networkBandwidthUsed_KBs = 100;
-		boolean on = true;
-		double maximumNetworkBandwidth_KBs = 1000;
-		
-		Blade blade = new Blade(id, memory_total,
-				memoryUsage_current_MB,
-				disk_total_GB,
-				diskUsage_current_GB,
-				networkBandwidthUsed_KBs,
-				on,
-				maximumNetworkBandwidth_KBs);
-	
-		cloud.setBlade(id, blade);	
-		
-		/****************************/
+//		/***** Simulation FIXME ******/
+//		
+//		long id = 1;
+//		double memory_total = 100;
+//		double memoryUsage_current_MB = 50;
+//		double disk_total_GB = 100;
+//		double diskUsage_current_GB = 50;
+//		double networkBandwidthUsed_KBs = 100;
+//		boolean on = true;
+//		double maximumNetworkBandwidth_KBs = 1000;
+//		
+//		Blade blade = new Blade(id, memory_total,
+//				memoryUsage_current_MB,
+//				disk_total_GB,
+//				diskUsage_current_GB,
+//				networkBandwidthUsed_KBs,
+//				on,
+//				maximumNetworkBandwidth_KBs);
+//	
+//		cloud.setBlade(id, blade);	
+//		
+//		/****************************/
 	}
 	
 	public static CloudState getInstance(){
@@ -99,7 +101,7 @@ public class CloudState {
 		_instance.updateVMStates();
 		
 		// Update Blade States
-		
+		cloud.updateBlades(hostStates);
 	}
 	
 	public void setBlade(Long id, Blade blade){
