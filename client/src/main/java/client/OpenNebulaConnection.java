@@ -62,6 +62,28 @@ public class OpenNebulaConnection {
 	}
 	
 	/**
+	 * Deletes a VM and releases its resources.
+	 * 
+	 * @param vmID
+	 * @return
+	 */
+	public OneResponse deleteVM(int vmID) {
+		macPool.info();
+		return macPool.getById(vmID).finalizeVM();
+	}
+	
+	/**
+	 * Shut downs  a VM.
+	 * 
+	 * @param vmID
+	 * @return
+	 */
+	public OneResponse shutdownVM(int vmID) {
+		macPool.info();
+		return macPool.getById(vmID).shutdown();
+	}
+	
+	/**
 	 * Will migrate a VM to the new specified host. 
 	 * Can specifiy a live migration.
 	 * 

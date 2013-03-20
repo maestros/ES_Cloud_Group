@@ -55,5 +55,39 @@ public class VirtualMachineDeployment {
 		
 		return true;
 	}
+	
+	/**
+	 * Deletes the specified VM and releases its resources.
+	 * 
+	 * @param vmID
+	 * @return
+	 * @throws IllegalMachineStateException
+	 */
+	public boolean deleteVM(int vmID) throws IllegalMachineStateException {
+		OneResponse res = conn.deleteVM(vmID);
+		
+		if (res.isError()) {
+			throw new IllegalMachineStateException("VM could not be deleted: " + res.getErrorMessage());
+		}
+		
+		return true;
+	}
 
+	/**
+	 * Shuts down the specified VM.
+	 * 
+	 * @param vmID
+	 * @return
+	 * @throws IllegalMachineStateException
+	 */
+	public boolean shutdownVM(int vmID) throws IllegalMachineStateException {
+		OneResponse res = conn.shutdownVM(vmID);
+		
+		if (res.isError()) {
+			throw new IllegalMachineStateException("VM could not be shutdown: " + res.getErrorMessage());
+		}
+		
+		return true;
+	}
+	
 }
