@@ -23,8 +23,9 @@ public class CloudClient {
 	private static final Logger LOG = Logger.getLogger(CloudClient.class.getCanonicalName());
 	private static CloudState cloudState;
 	private Gson gson = null;
-    private static final int EXECUTOR_DELAY = 2000;//*60*10;	//CONSTANT, 10 minutes
-    private static ScheduledExecutorService executor;	//the reference for the Game State thread executor
+    private static final int EXECUTOR_DELAY = 2000;	//CONSTANT, 10 seconds
+    private static ScheduledExecutorService updateStateExecutor;	//the reference for the Game State thread executor
+    private boolean active;
     
 	{
 		LOG.setLevel(Main.getLogLevel());
@@ -52,24 +53,43 @@ public class CloudClient {
 		gson = new Gson();
 		cloudState = CloudState.getInstance();
 		
-    	executor = Executors.newSingleThreadScheduledExecutor(); //The singleton instance of the executor thread
+    	updateStateExecutor = Executors.newSingleThreadScheduledExecutor(); //The singleton instance of the executor thread
         // schedule the executor Thread to be executed every EXECUTOR_DELAY milliseconds
        
         Runnable updateCloudState = new Runnable() {	//The thread that updates Cloud state and sends it to the Drools server
             public void run() {
             	try {
             		cloudState.updateState();	//when runs it updates the Cloud state
-            		sendToServer(cloudState.getCloud());
+            		
+            		if (active==false)
+            			sendToServer(cloudState.getCloud());
             	}
             	catch(Exception e){
-            		LOG.error("Error executing: updateGameStateTask. It will no longer run!");
+            		LOG.error("Error executing: updateCloudState. It will no longer run!");
                     e.printStackTrace();
                     throw new RuntimeException(e);
             	}
             }
         };
         
-    	executor.scheduleAtFixedRate(updateCloudState, 0, EXECUTOR_DELAY, TimeUnit.MILLISECONDS);
+    	updateStateExecutor.scheduleAtFixedRate(updateCloudState, 0, EXECUTOR_DELAY, TimeUnit.MILLISECONDS);
+    
+        Runnable readActions = new Runnable() {	//The thread that waits for input from the Drools Server
+            public void run() {
+            	try {
+            		String input = in.readLine();
+            		
+            		if (input!=null)
+            			
+            	}
+            	catch(Exception e){
+            		LOG.error("Error executing: readActions!");
+                    e.printStackTrace();
+                    throw new RuntimeException(e);
+            	}
+            }
+        };   
+    
     }
     
     public static CloudClient getInstance(){

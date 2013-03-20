@@ -19,6 +19,8 @@ public class CloudState {
 	private List<MachineState> vmStates;
 	private List<MachineState> hostStates;
 	
+	private List<Blade> blades;
+	
 	{
 		LOG = Logger.getLogger(CloudState.class.getCanonicalName());
 		LOG.setLevel(Main.getLogLevel());
@@ -91,6 +93,9 @@ public class CloudState {
 		LOG.info("Cloud State updated");
 		_instance.updateHostStates();
 		_instance.updateVMStates();
+		
+		// Update Blade States
+		
 	}
 	
 	public void setBlade(Long id, Blade blade){
