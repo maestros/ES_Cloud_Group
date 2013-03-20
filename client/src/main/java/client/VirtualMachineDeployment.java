@@ -5,8 +5,6 @@ import java.io.IOException;
 import org.opennebula.client.OneResponse;
 import org.opennebula.client.vm.VirtualMachine;
 
-import com.sun.tools.attach.AttachNotSupportedException;
-
 public class VirtualMachineDeployment {
 	
 	public static void main(String[] args) {
