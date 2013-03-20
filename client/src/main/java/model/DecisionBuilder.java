@@ -6,67 +6,82 @@ package model;
  * 20 March 2013
  * @author Apostolos Giannakidis
  */
+import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import client.CloudClient;
+import client.IllegalMachineStateException;
+import client.MachineMonitor;
+import client.Main;
+
 public class DecisionBuilder {
-    private JSONArray commandFromServer;
     private static DecisionBuilder _instance = new DecisionBuilder();
+    private static Logger LOG = Logger.getLogger(DecisionBuilder.class.getCanonicalName());
+    private static MachineMonitor vmMonitor = MachineMonitor.getInstance();
+    private static CloudClient cloudclient = CloudClient.getInstance();
     
+	{
+		LOG.setLevel(Main.getLogLevel());
+	}
+	
     private DecisionBuilder() {
-        this.commandFromServer = new JSONArray();
     }
     
     public static DecisionBuilder getInstance(){
     	return _instance;
     }
 
-    public void makeDecision(JSONArray json){
-    	commandFromServer = json;
+    public void makeDecision(JSONArray jsonArray){
+    	Decisions decision = null;
+    	int bladeId;
+    	int vmID;
+    	int toId;
     	
+	    try {
+	    	cloudclient.setActive(true);
+	    	for (int i = 0; i < jsonArray.length(); ++i) {
+    	    	JSONObject rec = jsonArray.getJSONObject(i);
+				decision = Decisions.valueOf(rec.getString("action"));
+				bladeId = Integer.parseInt(rec.getString("BladeID"));
+				
+				switch(decision){
+					case Move:
+						vmID = Integer.parseInt(rec.getString("VmID"));
+						toId = Integer.parseInt(rec.getString("ToBladeID"));
+						try {
+							vmMonitor.migrateVM(vmID, toId, true);
+						} catch (IllegalMachineStateException e) {
+							LOG.error("Move VM failed.");
+							e.printStackTrace();
+						}
+						break;
+					case OpenNewBlade:
+						try {
+							vmMonitor.enableHost(bladeId);
+						} catch (IllegalMachineStateException e) {
+							LOG.error("EnableHost failed.");
+							e.printStackTrace();
+						}
+						break;
+					case ShutDownBlade:
+						try {
+							vmMonitor.disableHost(bladeId);
+						} catch (IllegalMachineStateException e) {
+							LOG.error("DisableHost failed.");
+							e.printStackTrace();
+						}
+						break;
+					default:
+						LOG.error("Unknown action");
+						break;
+				}
+	    	}
+	    	cloudclient.setActive(false);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}   
     }
 
-
-    public void shutdownBlade(Blade blade) {
-        try {
-            JSONObject node = new JSONObject();
-            node.put("action", Decisions.ShutDownBlade);
-            node.put("BladeID", blade.getID());
-            commandFromServer.put(node);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void tryOpenNewBlade() {
-        try {
-            JSONObject node = new JSONObject();
-            node.put("action", Decisions.OpenNewBlade);
-            commandFromServer.put(node);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void moveVm2Blade(VM vm, Blade toBlade, Blade fromBlade) {
-        try {
-            JSONObject node = new JSONObject();
-            node.put("action", Decisions.Move);
-            node.put("VmID", vm.getID());
-            node.put("FromBladeID", fromBlade.getID());
-            node.put("ToBladeID", toBlade.getID());
-            commandFromServer.put(node);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void setCommandToClient(JSONArray commandToClient) {
-        this.commandFromServer = commandToClient;
-    }
-
-    public JSONArray getCommandToClient() {
-        return commandFromServer;
-    }
 }

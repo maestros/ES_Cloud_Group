@@ -7,8 +7,10 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import model.Cloud;
+import model.DecisionBuilder;
 
 import org.apache.log4j.*;
+import org.json.JSONArray;
 
 import com.google.gson.Gson;
 
@@ -20,8 +22,9 @@ public class CloudClient {
     private BufferedReader in;
     private BufferedWriter out;
     private static CloudClient _CloudClientinstance;
-	private static final Logger LOG = Logger.getLogger(CloudClient.class.getCanonicalName());
+	private static Logger LOG = Logger.getLogger(CloudClient.class.getCanonicalName());
 	private static CloudState cloudState;
+	private static DecisionBuilder decisionBuilder = DecisionBuilder.getInstance();
 	private Gson gson = null;
     private static final int EXECUTOR_DELAY = 2000;	//CONSTANT, 10 seconds
     private static ScheduledExecutorService updateStateExecutor;	//the reference for the Game State thread executor
@@ -34,6 +37,10 @@ public class CloudClient {
     private CloudClient(){
     	initialiseClient();
     	LOG.info("Client started...");
+    }
+    
+    public synchronized void setActive(boolean b){
+    	active = b;
     }
     
     private void initialiseClient(){
@@ -80,7 +87,7 @@ public class CloudClient {
             		String input = in.readLine();
             		
             		if (input!=null)
-            			
+            			decisionBuilder.makeDecision(new JSONArray(input));
             	}
             	catch(Exception e){
             		LOG.error("Error executing: readActions!");

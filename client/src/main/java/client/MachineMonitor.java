@@ -76,6 +76,10 @@ public class MachineMonitor {
 			_MMinstance = new MachineMonitor(conn);
 		return _MMinstance;
 	}
+	
+	public static MachineMonitor getInstance(){
+		return _MMinstance;
+	}
 
 	public boolean migrateVM(int vmID, int newHostID, boolean live)
 			throws IllegalMachineStateException {

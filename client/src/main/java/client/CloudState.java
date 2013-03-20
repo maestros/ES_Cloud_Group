@@ -30,7 +30,9 @@ public class CloudState {
 		cloud = new Cloud();
 		vmMonitor = MachineMonitor.VMMonitorFactory(secret, target);
 		
+		
 		/***** Simulation FIXME ******/
+		/*
 		long id = 1;
 		double memory_total = 100;
 		double memoryUsage_current_MB = 50;
@@ -49,7 +51,7 @@ public class CloudState {
 				maximumNetworkBandwidth_KBs);
 	
 		cloud.setBlade(id, blade);	
-		
+		*/
 		/****************************/
 	}
 	
@@ -88,6 +90,7 @@ public class CloudState {
 			System.out.println(ms);
 		}
 	}
+	
 	
 	public void updateState(){
 		LOG.info("Cloud State updated");
