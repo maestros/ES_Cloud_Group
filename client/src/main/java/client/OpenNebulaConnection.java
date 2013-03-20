@@ -15,6 +15,7 @@ public class OpenNebulaConnection {
 	private Client cli;
 	private VirtualMachinePool macPool;
 	private HostPool hostPool;
+	private static OpenNebulaConnection _instance;
 
 	// private String secret = "oneadmin:password";
 
@@ -45,7 +46,9 @@ public class OpenNebulaConnection {
 	 */
 	public static OpenNebulaConnection openNebulaConnectionFactory(
 			String secret, String target) {
-		return new OpenNebulaConnection(secret, target);
+		if (_instance==null)
+			_instance = new OpenNebulaConnection(secret, target);
+		return _instance;
 	}
 	
 	/**

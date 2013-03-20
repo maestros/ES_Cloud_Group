@@ -10,7 +10,19 @@ import org.opennebula.client.host.Host;
 import org.opennebula.client.vm.VirtualMachine;
 
 public class MachineMonitor {
-
+	
+	private static MachineMonitor _MMinstance;
+	private OpenNebulaConnection conn;
+	private static final String VM_CPU_USAGE = "CPU";
+	private static final String VM_RAM_USAGE = "MEMORY";
+	private static final String VM_HD_USAGE = "DS_ID";
+	private static final String HOST_CPU_USAGE = "USED_CPU";
+	private static final String HOST_RAM_USAGE = "USED_MEM";
+	private static final String HOST_HD_USAGE = "USED_DISK";
+	private static final String HOST_CPU_FREE = "FREE_CPU";
+	private static final String HOST_RAM_FREE = "FREE_MEM";
+	private static final String HOST_HD_FREE = "FREE_DISK";
+	
 	public static void main(String[] args) {
 		// VMMonitor vmm = VMMonitor.VMMonitorFactory("oneadmin:password",
 		// "http://147.188.195.213:2633/RPC2");
@@ -45,19 +57,6 @@ public class MachineMonitor {
 		}
 	}
 
-	private static final String VM_CPU_USAGE = "CPU";
-	private static final String VM_RAM_USAGE = "MEMORY";
-	private static final String VM_HD_USAGE = "DS_ID";
-
-	private static final String HOST_CPU_USAGE = "USED_CPU";
-	private static final String HOST_RAM_USAGE = "USED_MEM";
-	private static final String HOST_HD_USAGE = "USED_DISK";
-	private static final String HOST_CPU_FREE = "FREE_CPU";
-	private static final String HOST_RAM_FREE = "FREE_MEM";
-	private static final String HOST_HD_FREE = "FREE_DISK";
-
-	private OpenNebulaConnection conn;
-
 	private MachineMonitor(OpenNebulaConnection conn) {
 		this.conn = conn;
 	}
@@ -72,7 +71,10 @@ public class MachineMonitor {
 	public static MachineMonitor VMMonitorFactory(String secret, String target) {
 		OpenNebulaConnection conn = OpenNebulaConnection
 				.openNebulaConnectionFactory(secret, target);
-		return new MachineMonitor(conn);
+		
+		if(_MMinstance==null)
+			_MMinstance = new MachineMonitor(conn);
+		return _MMinstance;
 	}
 	
 	public boolean migrateVM(int vmID, int newHostID, boolean live) throws IllegalMachineStateException {

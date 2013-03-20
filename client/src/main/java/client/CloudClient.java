@@ -9,22 +9,22 @@ import org.apache.log4j.*;
 
 import com.google.gson.Gson;
 
-public class Client {
+public class CloudClient {
 	
 	private int PORT = 2111;
 	private String HOST = "localhost";
     private Socket socket = null;
     private BufferedReader in;
     private BufferedWriter out;
-    private static Client _instance = null;
-	private static final Logger LOG = Logger.getLogger(Client.class.getCanonicalName());
+    private static CloudClient _instance = null;
+	private static final Logger LOG = Logger.getLogger(CloudClient.class.getCanonicalName());
 	private Gson gson = null;
 	
 	{
 		LOG.setLevel(Main.getLogLevel());
 	}
 	
-    private Client(){
+    private CloudClient(){
     	initialiseClient();
     	LOG.info("Client started...");
     }
@@ -46,9 +46,9 @@ public class Client {
 		gson = new Gson();
     }
     
-    public static Client getInstance(){
+    public static CloudClient getInstance(){
     	if (_instance==null)
-    		_instance = new Client();
+    		_instance = new CloudClient();
     	
     	return _instance;
     }

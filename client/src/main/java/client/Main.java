@@ -1,6 +1,7 @@
 package client;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import model.Blade;
 import model.Cloud;
@@ -8,6 +9,8 @@ import model.Cloud;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+
+import client.MachineMonitor.MachineState;
 
 import com.google.gson.Gson;
 
@@ -19,25 +22,38 @@ public class Main {
     
 	private static final Logger LOG = Logger.getLogger(Main.class.getCanonicalName());
 	private static Cloud cloud = null;
-	private static Client client = null;
+	private static CloudClient cloudClient = null;
+	private static MachineMonitor vmMonitor = null;
 	
 	public static void main(String[] args) {
 			
 		setupLogger(args);
 		
-		setupServer();
+	//	setupCloudClient();
 		
-		setupCloud();
+		setupCloud("oneadmin:password", "http://localhost:2633/RPC2");
 	
-		client.sendToServer(cloud);
-		/*
-		Gson gson = new Gson();
+	//	cloudClient.sendToServer(cloud);
 		
-		String s = gson.toJson(cloud);
-		
-		LOG.info(s);
-		
-		Cloud cloud2 = gson.fromJson(s, Cloud.class)*/
+		try {
+			System.out.println("\nVMS:\n");
+			List<MachineState> vmStates = vmMonitor.getVMStates();
+			for (MachineState ms : vmStates) {
+				System.out.println(ms);
+			}
+		} catch (IllegalMachineStateException e) {
+			e.printStackTrace();
+		}
+
+		try {
+			System.out.println("\nHOSTS:\n");
+			List<MachineState> hostStates = vmMonitor.getHostStates();
+			for (MachineState ms : hostStates) {
+				System.out.println(ms);
+			}
+		} catch (IllegalMachineStateException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	private static void setupLogger(String[] args){
@@ -50,12 +66,13 @@ public class Main {
 		LOG.info("Log level is set to: "+LOG.getLevel());
 	}
 	
-	private static void setupServer(){
-		client = Client.getInstance();
+	private static void setupCloudClient(){
+		cloudClient = CloudClient.getInstance();
 	}
 
-	private static void setupCloud(){
+	private static void setupCloud(String secret, String target){
 		cloud = new Cloud();
+		vmMonitor = MachineMonitor.VMMonitorFactory(secret, target);
 		
 		/***** Simulation FIXME ******/
 		long id = 1;
