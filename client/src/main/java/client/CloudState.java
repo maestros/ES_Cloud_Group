@@ -1,5 +1,6 @@
 package client;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -29,8 +30,10 @@ public class CloudState {
 	private CloudState(){
 		cloud = new Cloud();
 		vmMonitor = MachineMonitor.VMMonitorFactory(secret, target);
+		blades = new ArrayList<Blade>();
 		
 		/***** Simulation FIXME ******/
+		
 		long id = 1;
 		double memory_total = 100;
 		double memoryUsage_current_MB = 50;
@@ -88,6 +91,7 @@ public class CloudState {
 			System.out.println(ms);
 		}
 	}
+	
 	
 	public void updateState(){
 		LOG.info("Cloud State updated");
