@@ -18,11 +18,12 @@ import client.Main;
 
 public class DecisionBuilder {
     private static DecisionBuilder _instance = new DecisionBuilder();
-    private static Logger LOG = Logger.getLogger(DecisionBuilder.class.getCanonicalName());
+    private static Logger LOG;
     private static MachineMonitor vmMonitor = MachineMonitor.getInstance();
     private static CloudClient cloudclient = CloudClient.getInstance();
     
 	{
+		LOG = Logger.getLogger(DecisionBuilder.class.getCanonicalName());
 		LOG.setLevel(Main.getLogLevel());
 	}
 	
@@ -67,6 +68,9 @@ public class DecisionBuilder {
 						break;
 					case ShutDownBlade:
 						try {
+							if (vmMonitor==null)
+								LOG.info("vmMonitor is null");
+							
 							vmMonitor.disableHost(bladeId);
 						} catch (IllegalMachineStateException e) {
 							LOG.error("DisableHost failed.");

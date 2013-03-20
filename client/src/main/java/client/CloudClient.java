@@ -24,7 +24,7 @@ public class CloudClient {
     private static CloudClient _CloudClientinstance;
 	private static Logger LOG = Logger.getLogger(CloudClient.class.getCanonicalName());
 	private static CloudState cloudState;
-	private static DecisionBuilder decisionBuilder = DecisionBuilder.getInstance();
+	private static DecisionBuilder decisionBuilder;
 	private Gson gson = null;
     private static final int EXECUTOR_DELAY = 2000;	//CONSTANT, 10 seconds
     private static ScheduledExecutorService updateStateExecutor;	//the reference for the Game State thread executor
@@ -59,7 +59,7 @@ public class CloudClient {
 		}
 		gson = new Gson();
 		cloudState = CloudState.getInstance();
-		
+		decisionBuilder = DecisionBuilder.getInstance();
     	updateStateExecutor = Executors.newSingleThreadScheduledExecutor(); //The singleton instance of the executor thread
         // schedule the executor Thread to be executed every EXECUTOR_DELAY milliseconds
        
@@ -83,11 +83,16 @@ public class CloudClient {
     
         Runnable readActions = new Runnable() {	//The thread that waits for input from the Drools Server
             public void run() {
+            	LOG.info("readActions started.");
             	try {
-            		String input = in.readLine();
-            		
-            		if (input!=null)
-            			decisionBuilder.makeDecision(new JSONArray(input));
+            		String input = null;
+            		while(true){
+	            		while ((input = in.readLine())!=null){
+	            			LOG.info("Received: "+input);
+	            			decisionBuilder.makeDecision(new JSONArray(input));
+	            		}
+	            		Thread.sleep(100);
+            		}
             	}
             	catch(Exception e){
             		LOG.error("Error executing: readActions!");
@@ -97,6 +102,7 @@ public class CloudClient {
             }
         };   
     
+        new Thread(readActions).start();
     }
     
     public static CloudClient getInstance(){

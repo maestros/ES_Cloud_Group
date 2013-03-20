@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import model.DecisionBuilder;
+
+import org.apache.log4j.Logger;
 import org.opennebula.client.OneResponse;
 import org.opennebula.client.host.Host;
 import org.opennebula.client.vm.VirtualMachine;
@@ -22,7 +25,13 @@ public class MachineMonitor {
 	private static final String HOST_CPU_FREE = "FREE_CPU";
 	private static final String HOST_RAM_FREE = "FREE_MEM";
 	private static final String HOST_HD_FREE = "FREE_DISK";
-
+	private static Logger LOG;
+	
+	{
+		LOG = Logger.getLogger(MachineMonitor.class.getCanonicalName());
+		LOG.setLevel(Main.getLogLevel());
+	}
+	
 	public static void main(String[] args) {
 		// VMMonitor vmm = VMMonitor.VMMonitorFactory("oneadmin:password",
 		// "http://147.188.195.213:2633/RPC2");
