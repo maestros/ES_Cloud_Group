@@ -3,6 +3,12 @@ package model;
 
 import java.util.List;
 
+/**
+ * VM
+ * 
+ * @author Luke
+ */
+
 public class VM {
 
     private Long ID;

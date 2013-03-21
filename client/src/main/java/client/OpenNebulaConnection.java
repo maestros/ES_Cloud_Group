@@ -10,6 +10,13 @@ import org.opennebula.client.template.TemplatePool;
 import org.opennebula.client.vm.VirtualMachine;
 import org.opennebula.client.vm.VirtualMachinePool;
 
+/**
+ * OpenNebulaConnection
+ *
+ * 19 March 2013
+ * @author Alex Darer
+ */
+
 public class OpenNebulaConnection {
 
 	private Client cli;

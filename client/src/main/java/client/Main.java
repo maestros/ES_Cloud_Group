@@ -5,6 +5,9 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 /**
+ * Main
+ *
+ * 15 March 2013
  * @author Apostolos Giannakidis
  */
 
@@ -20,7 +23,9 @@ public class Main {
 	}
 	
 	private static void setupLogger(String[] args){
+		BasicConfigurator.resetConfiguration();
 		BasicConfigurator.configure();
+		
 		if(args.length==2)
 			LOG.setLevel(Level.toLevel(args[1]));
 		else

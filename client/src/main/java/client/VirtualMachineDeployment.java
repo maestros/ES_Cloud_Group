@@ -1,9 +1,13 @@
 package client;
 
-import java.io.IOException;
-
 import org.opennebula.client.OneResponse;
-import org.opennebula.client.vm.VirtualMachine;
+
+/**
+ * VirtualMachineDeployment
+ *
+ * 20 March 2013
+ * @author Alex Darer
+ */
 
 public class VirtualMachineDeployment {
 	

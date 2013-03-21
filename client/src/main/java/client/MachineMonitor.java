@@ -12,6 +12,13 @@ import org.opennebula.client.OneResponse;
 import org.opennebula.client.host.Host;
 import org.opennebula.client.vm.VirtualMachine;
 
+/**
+ * MachineMonitor
+ *
+ * 18 March 2013
+ * @author Alex Darer
+ */
+
 public class MachineMonitor {
 
 	private static MachineMonitor _MMinstance;
