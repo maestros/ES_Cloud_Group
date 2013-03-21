@@ -135,8 +135,8 @@ public class OpenNebulaConnection {
 	 * @return
 	 */
 	public OneResponse getAllVMStates() {
-		macPool.info();
-		return macPool.monitoring(VirtualMachinePool.ALL_VM);
+		return macPool.info();
+		//return macPool.monitoring(VirtualMachinePool.ALL_VM);
 	}
 
 	/**

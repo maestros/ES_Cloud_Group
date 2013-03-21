@@ -54,7 +54,7 @@ public class MachineMonitor {
 		OpenNebulaConnection conn = OpenNebulaConnection
 				.openNebulaConnectionFactory("oneadmin:password",
 						"http://localhost:2633/RPC2");
-		System.out.println(conn.getAllHostStates().getMessage());
+		System.out.println(conn.getAllVMStates().getMessage());
 
 		try {
 			System.out.println("\nVMS:\n");
