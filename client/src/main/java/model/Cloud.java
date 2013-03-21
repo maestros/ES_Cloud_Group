@@ -33,7 +33,7 @@ public class Cloud {
 				bl.setOn(ms.enabled);
 			} else {
 				bl = new Blade(ms.ID, ms.maxRam, ms.ramUsage, ms.maxHD,
-						ms.hdUsage, 0, true, 0);
+						ms.hdUsage, 0, true, 1000);
 				bl.addCpuDataPoint(ms.cpuUsage);
 				bl.addNetworkUsageDataPoint(0.0);
 
