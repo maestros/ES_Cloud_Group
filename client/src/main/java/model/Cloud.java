@@ -30,6 +30,7 @@ public class Cloud {
 				bl.setDiskUsage_current_GB(ms.hdUsage);
 				bl.setMemoryUsage_current_MB(ms.ramUsage);
 				bl.addNetworkUsageDataPoint(0.0);
+				bl.setOn(ms.enabled);
 			} else {
 				bl = new Blade(ms.ID, ms.maxRam, ms.ramUsage, ms.maxHD,
 						ms.hdUsage, 0, true, 0);

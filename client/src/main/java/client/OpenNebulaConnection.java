@@ -166,8 +166,8 @@ public class OpenNebulaConnection {
 	 * @return
 	 */
 	public OneResponse getAllHostStates() {
-		hostPool.info();
-		return hostPool.monitoring();
+		return hostPool.info();
+		//return hostPool.monitoring();
 	}
 	
 	/**
