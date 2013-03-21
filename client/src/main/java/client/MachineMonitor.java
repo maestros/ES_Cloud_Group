@@ -25,6 +25,8 @@ public class MachineMonitor {
 
 	private static MachineMonitor _MMinstance;
 	private OpenNebulaConnection conn;
+
+	private static final String VM_HOST_ID = "HID";
 	private static final String VM_CPU_USAGE = "CPU";
 	private static final String VM_RAM_USAGE = "MEMORY";
 	private static final String VM_HD_USAGE = "DS_ID";
@@ -139,11 +141,12 @@ public class MachineMonitor {
 					throw new IllegalMachineStateException("VM: " + key
 							+ " DOES NOT EXIST");
 				} else {
-					vmStates.add(new MachineState(key, true, Double
-							.parseDouble(vmState.get(VM_CPU_USAGE)), Double
-							.parseDouble(vmState.get(VM_RAM_USAGE)), Double
-							.parseDouble(vmState.get(VM_HD_USAGE)), -1.0, -1.0,
-							-1.0, -1.0, -1.0, -1.0));
+					vmStates.add(new MachineState(key, Long.parseLong(vmState
+							.get(VM_HOST_ID)), true, Double.parseDouble(vmState
+							.get(VM_CPU_USAGE)), Double.parseDouble(vmState
+							.get(VM_RAM_USAGE)), Double.parseDouble(vmState
+							.get(VM_HD_USAGE)), -1.0, -1.0, -1.0, -1.0, -1.0,
+							-1.0));
 				}
 			}
 		}
@@ -174,7 +177,8 @@ public class MachineMonitor {
 				throw new IllegalMachineStateException("VM: " + vmID
 						+ " DOES NOT EXIST");
 			} else {
-				return new MachineState(vmID, true, Double.parseDouble(vmState
+				return new MachineState(vmID, Long.parseLong(vmState
+						.get(VM_HOST_ID)), true, Double.parseDouble(vmState
 						.get(VM_CPU_USAGE)), Double.parseDouble(vmState
 						.get(VM_RAM_USAGE)), Double.parseDouble(vmState
 						.get(VM_HD_USAGE)), -1.0, -1.0, -1.0, -1.0, -1.0, -1.0);
@@ -211,8 +215,8 @@ public class MachineMonitor {
 				} else {
 					Host h = conn.getHost(key);
 					if (h != null) {
-						hostStates.add(new MachineState(key, h.isEnabled(),
-								Double.parseDouble(hostState
+						hostStates.add(new MachineState(key, key,
+								h.isEnabled(), Double.parseDouble(hostState
 										.get(HOST_CPU_USAGE)), Double
 										.parseDouble(hostState
 												.get(HOST_RAM_USAGE)), Double
@@ -258,7 +262,7 @@ public class MachineMonitor {
 				throw new IllegalMachineStateException("Host: " + hostID
 						+ " DOES NOT EXIST");
 			} else {
-				return new MachineState(hostID, conn.getHost(hostID)
+				return new MachineState(hostID, hostID, conn.getHost(hostID)
 						.isEnabled(), Double.parseDouble(hostState
 						.get(HOST_CPU_USAGE)), Double.parseDouble(hostState
 						.get(HOST_RAM_USAGE)), Double.parseDouble(hostState
@@ -329,11 +333,12 @@ public class MachineMonitor {
 	 * @param hdUsage
 	 * @return
 	 */
-	public MachineState newVMState(long ID, boolean enabled, double cpuUsage,
-			double ramUsage, double hdUsage, double cpuFree, double ramFree,
-			double hdFree, double maxCPU, double maxRam, double maxHD) {
-		return new MachineState(ID, enabled, cpuUsage, ramUsage, hdUsage,
-				cpuFree, ramFree, hdFree, maxCPU, maxRam, maxHD);
+	public MachineState newVMState(long ID, long HOSTID, boolean enabled,
+			double cpuUsage, double ramUsage, double hdUsage, double cpuFree,
+			double ramFree, double hdFree, double maxCPU, double maxRam,
+			double maxHD) {
+		return new MachineState(ID, HOSTID, enabled, cpuUsage, ramUsage,
+				hdUsage, cpuFree, ramFree, hdFree, maxCPU, maxRam, maxHD);
 	}
 
 	/**
@@ -344,6 +349,7 @@ public class MachineMonitor {
 	 */
 	public class MachineState {
 		public final Long ID;
+		public final Long HOSTID;
 		public final boolean enabled;
 
 		public final double cpuUsage;
@@ -358,12 +364,14 @@ public class MachineMonitor {
 		public final double maxRam;
 		public final double maxHD;
 
-		private MachineState(final long ID, final boolean enabled,
-				final double cpuUsage, final double ramUsage,
-				final double hdUsage, final double cpuFree,
-				final double ramFree, final double hdFree, final double maxCPU,
-				final double maxRam, final double maxHD) {
+		private MachineState(final long ID, final long HOSTID,
+				final boolean enabled, final double cpuUsage,
+				final double ramUsage, final double hdUsage,
+				final double cpuFree, final double ramFree,
+				final double hdFree, final double maxCPU, final double maxRam,
+				final double maxHD) {
 			this.ID = ID;
+			this.HOSTID = HOSTID;
 			this.enabled = enabled;
 
 			this.cpuUsage = cpuUsage;

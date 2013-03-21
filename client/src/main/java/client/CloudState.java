@@ -85,7 +85,7 @@ public class CloudState {
 		_instance.updateVMStates();
 		
 		// Update Blade States
-		cloud.updateBlades(hostStates);
+		cloud.updateBlades(hostStates, vmStates);
 	}
 	
 	public void setBlade(Long id, Blade blade){

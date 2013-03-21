@@ -22,7 +22,7 @@ public class Cloud {
 		return blades;
 	}
 
-	public void updateBlades(List<MachineState> hostStates) {
+	public void updateBlades(List<MachineState> hostStates, List<MachineState> vmStates) {
 		for (MachineState ms : hostStates) {
 			Blade bl = blades.get(ms.ID);
 			if (bl != null) {
@@ -38,6 +38,23 @@ public class Cloud {
 				bl.addNetworkUsageDataPoint(0.0);
 
 				blades.put(bl.getID(), bl);
+			}
+		}
+		
+		for (MachineState ms : vmStates) {
+			Blade bl = blades.get(ms.HOSTID);
+			if (bl != null) {
+				VM vm = bl.getVMs().get(ms.ID);
+				if (vm != null) {
+					vm.addCpuDataPoint(ms.cpuUsage);
+					vm.addNetworkUsageDataPoint(0.0);
+				} else {
+					vm = new VM(ms.ID, ms.ramUsage, ms.hdUsage, ms.HOSTID);
+					vm.addCpuDataPoint(ms.cpuUsage);
+					vm.addNetworkUsageDataPoint(0.0);
+					
+					bl.getVMs().put(ms.ID, vm);
+				}
 			}
 		}
 	}
