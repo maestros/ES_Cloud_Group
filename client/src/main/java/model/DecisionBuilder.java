@@ -60,7 +60,7 @@ public class DecisionBuilder {
 						break;
 					case OpenNewBlade:
 						try {
-							vmMonitor.enableHost(25);
+							vmMonitor.enableHost();
 						} catch (IllegalMachineStateException e) {
 							LOG.error("EnableHost failed.");
 							e.printStackTrace();

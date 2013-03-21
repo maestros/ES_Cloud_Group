@@ -380,7 +380,8 @@ public class MachineMonitor {
 
 			this.cpuFree = cpuFree;
 			this.ramFree = ramFree;
-			this.hdFree = hdFree;
+			//this.hdFree = hdFree;
+			this.hdFree = 100000;
 
 			this.maxCPU = maxCPU;
 			this.maxRam = maxRam;
