@@ -385,7 +385,8 @@ public class MachineMonitor {
 
 			this.maxCPU = maxCPU;
 			this.maxRam = maxRam;
-			this.maxHD = maxHD;
+			//this.maxHD = maxHD;
+			this.maxHD = 10000000;
 		}
 
 		@Override
