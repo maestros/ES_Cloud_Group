@@ -3,15 +3,23 @@ package client;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 
 import client.MachineMonitor.MachineState;
 import model.Blade;
 import model.Cloud;
 
+/**
+ * CloudState
+ *
+ * 18 March 2013
+ * @author Apostolos Giannakidis
+ */
+
 public class CloudState {
 	
-	private static CloudState _instance = new CloudState();
+	private static CloudState _instance;
 	private static MachineMonitor vmMonitor;
 	private static Cloud cloud;
 	private static final String secret = "oneadmin:password";
@@ -20,45 +28,21 @@ public class CloudState {
 	private List<MachineState> vmStates;
 	private List<MachineState> hostStates;
 	
-	//private List<Blade> blades;
-	
 	{
 		LOG = Logger.getLogger(CloudState.class.getCanonicalName());
 		LOG.setLevel(Main.getLogLevel());
+		BasicConfigurator.resetConfiguration();
+		BasicConfigurator.configure();
 	}
 	
 	private CloudState(){
 		cloud = new Cloud();
 		vmMonitor = MachineMonitor.VMMonitorFactory(secret, target);
-		//blades = new ArrayList<Blade>();
-		
-		this.updateState();
-		
-//		/***** Simulation FIXME ******/
-//		
-//		long id = 1;
-//		double memory_total = 100;
-//		double memoryUsage_current_MB = 50;
-//		double disk_total_GB = 100;
-//		double diskUsage_current_GB = 50;
-//		double networkBandwidthUsed_KBs = 100;
-//		boolean on = true;
-//		double maximumNetworkBandwidth_KBs = 1000;
-//		
-//		Blade blade = new Blade(id, memory_total,
-//				memoryUsage_current_MB,
-//				disk_total_GB,
-//				diskUsage_current_GB,
-//				networkBandwidthUsed_KBs,
-//				on,
-//				maximumNetworkBandwidth_KBs);
-//	
-//		cloud.setBlade(id, blade);	
-//		
-//		/****************************/
 	}
 	
 	public static CloudState getInstance(){
+		if (_instance==null)
+			_instance = new CloudState();
 		return _instance;
 	}
 

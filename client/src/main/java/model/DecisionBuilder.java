@@ -20,7 +20,6 @@ public class DecisionBuilder {
     private static DecisionBuilder _instance = new DecisionBuilder();
     private static Logger LOG;
     private static MachineMonitor vmMonitor = MachineMonitor.getInstance();
-    private static CloudClient cloudclient = CloudClient.getInstance();
     
 	{
 		LOG = Logger.getLogger(DecisionBuilder.class.getCanonicalName());
@@ -41,14 +40,15 @@ public class DecisionBuilder {
     	int toId;
     	
 	    try {
-	    	cloudclient.setActive(true);
+	    	CloudClient.setActive(true);
+	    	LOG.info("Active = true");
 	    	for (int i = 0; i < jsonArray.length(); ++i) {
     	    	JSONObject rec = jsonArray.getJSONObject(i);
 				decision = Decisions.valueOf(rec.getString("action"));
-				bladeId = Integer.parseInt(rec.getString("BladeID"));
 				
 				switch(decision){
 					case Move:
+						bladeId = Integer.parseInt(rec.getString("BladeID"));
 						vmID = Integer.parseInt(rec.getString("VmID"));
 						toId = Integer.parseInt(rec.getString("ToBladeID"));
 						try {
@@ -60,7 +60,7 @@ public class DecisionBuilder {
 						break;
 					case OpenNewBlade:
 						try {
-							vmMonitor.enableHost(bladeId);
+							vmMonitor.enableHost(25);
 						} catch (IllegalMachineStateException e) {
 							LOG.error("EnableHost failed.");
 							e.printStackTrace();
@@ -68,9 +68,7 @@ public class DecisionBuilder {
 						break;
 					case ShutDownBlade:
 						try {
-							if (vmMonitor==null)
-								LOG.info("vmMonitor is null");
-							
+							bladeId = Integer.parseInt(rec.getString("BladeID"));
 							vmMonitor.disableHost(bladeId);
 						} catch (IllegalMachineStateException e) {
 							LOG.error("DisableHost failed.");
@@ -82,7 +80,8 @@ public class DecisionBuilder {
 						break;
 				}
 	    	}
-	    	cloudclient.setActive(false);
+	    	CloudClient.setActive(false);
+	    	LOG.info("Active = false");
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}   

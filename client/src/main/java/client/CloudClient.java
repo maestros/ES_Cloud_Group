@@ -5,14 +5,19 @@ import java.net.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-
+import java.util.concurrent.atomic.AtomicBoolean;
 import model.Cloud;
 import model.DecisionBuilder;
-
 import org.apache.log4j.*;
 import org.json.JSONArray;
-
 import com.google.gson.Gson;
+
+/**
+ * CloudClient
+ *
+ * 18 March 2013
+ * @author Apostolos Giannakidis
+ */
 
 public class CloudClient {
 	
@@ -26,12 +31,14 @@ public class CloudClient {
 	private static CloudState cloudState;
 	private static DecisionBuilder decisionBuilder;
 	private Gson gson = null;
-    private static final int EXECUTOR_DELAY = 2000;	//CONSTANT, 10 seconds
+    private static final int EXECUTOR_DELAY = 10000;	//CONSTANT, 10 seconds
     private static ScheduledExecutorService updateStateExecutor;	//the reference for the Game State thread executor
-    private boolean active;
+    private static final AtomicBoolean active = new AtomicBoolean(false);
     
 	{
 		LOG.setLevel(Main.getLogLevel());
+		BasicConfigurator.resetConfiguration();
+		BasicConfigurator.configure();
 	}
 	
     private CloudClient(){
@@ -39,8 +46,8 @@ public class CloudClient {
     	LOG.info("Client started...");
     }
     
-    public synchronized void setActive(boolean b){
-    	active = b;
+    public static void setActive(boolean newActiveStatus){
+    	active.set(newActiveStatus);
     }
     
     private void initialiseClient(){
@@ -59,6 +66,7 @@ public class CloudClient {
 		}
 		gson = new Gson();
 		cloudState = CloudState.getInstance();
+		cloudState.updateState();
 		decisionBuilder = DecisionBuilder.getInstance();
     	updateStateExecutor = Executors.newSingleThreadScheduledExecutor(); //The singleton instance of the executor thread
         // schedule the executor Thread to be executed every EXECUTOR_DELAY milliseconds
@@ -68,8 +76,11 @@ public class CloudClient {
             	try {
             		cloudState.updateState();	//when runs it updates the Cloud state
             		
-            		if (active==false)
+            		if (active.get()==false){
+            			LOG.info("Sending cloud to server.");
             			sendToServer(cloudState.getCloud());
+            			LOG.info("Cloud was sent.");
+            		}
             	}
             	catch(Exception e){
             		LOG.error("Error executing: updateCloudState. It will no longer run!");
@@ -88,6 +99,10 @@ public class CloudClient {
             		String input = null;
             		while(true){
 	            		while ((input = in.readLine())!=null){
+	            			
+	            			if (input.equals("[]"))
+	            				continue;
+	            			
 	            			LOG.info("Received: "+input);
 	            			decisionBuilder.makeDecision(new JSONArray(input));
 	            		}
