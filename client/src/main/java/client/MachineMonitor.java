@@ -50,10 +50,12 @@ public class MachineMonitor {
 		// "http://147.188.195.213:2633/RPC2");
 		MachineMonitor vmm = MachineMonitor.VMMonitorFactory(
 				"oneadmin:password", "http://localhost:2633/RPC2");
-		
-		OpenNebulaConnection conn = OpenNebulaConnection.openNebulaConnectionFactory("oneadmin:password", "http://localhost:2633/RPC2");
+
+		OpenNebulaConnection conn = OpenNebulaConnection
+				.openNebulaConnectionFactory("oneadmin:password",
+						"http://localhost:2633/RPC2");
 		System.out.println(conn.getAllHostStates().getMessage());
-		
+
 		try {
 			System.out.println("\nVMS:\n");
 			List<MachineState> vmStates = vmm.getVMStates();
@@ -207,16 +209,25 @@ public class MachineMonitor {
 					throw new IllegalMachineStateException("Host: " + key
 							+ " DOES NOT EXIST");
 				} else {
-					hostStates.add(new MachineState(key, conn.getHost(key).isEnabled(), Double
-							.parseDouble(hostState.get(HOST_CPU_USAGE)), Double
-							.parseDouble(hostState.get(HOST_RAM_USAGE)), Double
-							.parseDouble(hostState.get(HOST_HD_USAGE)), Double
-							.parseDouble(hostState.get(HOST_CPU_FREE)), Double
-							.parseDouble(hostState.get(HOST_RAM_FREE)), Double
-							.parseDouble(hostState.get(HOST_HD_FREE)), Double
-							.parseDouble(hostState.get(MAX_CPU)), Double
-							.parseDouble(hostState.get(MAX_RAM)), Double
-							.parseDouble(hostState.get(MAX_HD))));
+					Host h = conn.getHost(key);
+					if (h != null) {
+						hostStates.add(new MachineState(key, h.isEnabled(),
+								Double.parseDouble(hostState
+										.get(HOST_CPU_USAGE)), Double
+										.parseDouble(hostState
+												.get(HOST_RAM_USAGE)), Double
+										.parseDouble(hostState
+												.get(HOST_HD_USAGE)), Double
+										.parseDouble(hostState
+												.get(HOST_CPU_FREE)), Double
+										.parseDouble(hostState
+												.get(HOST_RAM_FREE)), Double
+										.parseDouble(hostState
+												.get(HOST_HD_FREE)), Double
+										.parseDouble(hostState.get(MAX_CPU)),
+								Double.parseDouble(hostState.get(MAX_RAM)),
+								Double.parseDouble(hostState.get(MAX_HD))));
+					}
 				}
 			}
 		}
@@ -247,7 +258,8 @@ public class MachineMonitor {
 				throw new IllegalMachineStateException("Host: " + hostID
 						+ " DOES NOT EXIST");
 			} else {
-				return new MachineState(hostID, conn.getHost(hostID).isEnabled(), Double.parseDouble(hostState
+				return new MachineState(hostID, conn.getHost(hostID)
+						.isEnabled(), Double.parseDouble(hostState
 						.get(HOST_CPU_USAGE)), Double.parseDouble(hostState
 						.get(HOST_RAM_USAGE)), Double.parseDouble(hostState
 						.get(HOST_HD_USAGE)), Double.parseDouble(hostState
@@ -317,11 +329,11 @@ public class MachineMonitor {
 	 * @param hdUsage
 	 * @return
 	 */
-	public MachineState newVMState(long ID, boolean enabled, double cpuUsage, double ramUsage,
-			double hdUsage, double cpuFree, double ramFree, double hdFree,
-			double maxCPU, double maxRam, double maxHD) {
-		return new MachineState(ID, enabled, cpuUsage, ramUsage, hdUsage, cpuFree,
-				ramFree, hdFree, maxCPU, maxRam, maxHD);
+	public MachineState newVMState(long ID, boolean enabled, double cpuUsage,
+			double ramUsage, double hdUsage, double cpuFree, double ramFree,
+			double hdFree, double maxCPU, double maxRam, double maxHD) {
+		return new MachineState(ID, enabled, cpuUsage, ramUsage, hdUsage,
+				cpuFree, ramFree, hdFree, maxCPU, maxRam, maxHD);
 	}
 
 	/**
@@ -333,7 +345,7 @@ public class MachineMonitor {
 	public class MachineState {
 		public final Long ID;
 		public final boolean enabled;
-		
+
 		public final double cpuUsage;
 		public final double ramUsage;
 		public final double hdUsage;
@@ -346,14 +358,14 @@ public class MachineMonitor {
 		public final double maxRam;
 		public final double maxHD;
 
-		private MachineState(final long ID, final boolean enabled, final double cpuUsage,
-				final double ramUsage, final double hdUsage,
-				final double cpuFree, final double ramFree,
-				final double hdFree, final double maxCPU, final double maxRam,
-				final double maxHD) {
+		private MachineState(final long ID, final boolean enabled,
+				final double cpuUsage, final double ramUsage,
+				final double hdUsage, final double cpuFree,
+				final double ramFree, final double hdFree, final double maxCPU,
+				final double maxRam, final double maxHD) {
 			this.ID = ID;
 			this.enabled = enabled;
-			
+
 			this.cpuUsage = cpuUsage;
 			this.ramUsage = ramUsage;
 			this.hdUsage = hdUsage;
