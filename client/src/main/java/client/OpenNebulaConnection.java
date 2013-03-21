@@ -1,5 +1,6 @@
 package client;
 
+import java.util.HashMap;
 import java.util.Iterator;
 
 import org.opennebula.client.Client;
@@ -12,8 +13,9 @@ import org.opennebula.client.vm.VirtualMachinePool;
 
 /**
  * OpenNebulaConnection
- *
+ * 
  * 19 March 2013
+ * 
  * @author Alex Darer
  */
 
@@ -37,8 +39,8 @@ public class OpenNebulaConnection {
 			// System.out.println(VirtualMachine.allocate(cli,
 			// s).getErrorMessage());
 
-//			System.out.println(hostPool.monitoring().getMessage());
-			
+			// System.out.println(hostPool.monitoring().getMessage());
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -53,11 +55,11 @@ public class OpenNebulaConnection {
 	 */
 	public static OpenNebulaConnection openNebulaConnectionFactory(
 			String secret, String target) {
-		if (_instance==null)
+		if (_instance == null)
 			_instance = new OpenNebulaConnection(secret, target);
 		return _instance;
 	}
-	
+
 	/**
 	 * Will deploy the given template as a VM.
 	 * 
@@ -67,7 +69,7 @@ public class OpenNebulaConnection {
 	public OneResponse deployVM(String template) {
 		return VirtualMachine.allocate(cli, template);
 	}
-	
+
 	/**
 	 * Deletes a VM and releases its resources.
 	 * 
@@ -78,9 +80,9 @@ public class OpenNebulaConnection {
 		macPool.info();
 		return macPool.getById(vmID).finalizeVM();
 	}
-	
+
 	/**
-	 * Shut downs  a VM.
+	 * Shut downs a VM.
 	 * 
 	 * @param vmID
 	 * @return
@@ -89,10 +91,10 @@ public class OpenNebulaConnection {
 		macPool.info();
 		return macPool.getById(vmID).shutdown();
 	}
-	
+
 	/**
-	 * Will migrate a VM to the new specified host. 
-	 * Can specifiy a live migration.
+	 * Will migrate a VM to the new specified host. Can specifiy a live
+	 * migration.
 	 * 
 	 * @param vmID
 	 * @param newHostID
@@ -136,7 +138,7 @@ public class OpenNebulaConnection {
 	 */
 	public OneResponse getAllVMStates() {
 		return macPool.info();
-		//return macPool.monitoring(VirtualMachinePool.ALL_VM);
+		// return macPool.monitoring(VirtualMachinePool.ALL_VM);
 	}
 
 	/**
@@ -167,9 +169,9 @@ public class OpenNebulaConnection {
 	 */
 	public OneResponse getAllHostStates() {
 		return hostPool.info();
-		//return hostPool.monitoring();
+		// return hostPool.monitoring();
 	}
-	
+
 	/**
 	 * Disables a host.
 	 * 
@@ -180,7 +182,7 @@ public class OpenNebulaConnection {
 		hostPool.info();
 		return hostPool.getById(hostID).disable();
 	}
-	
+
 	/**
 	 * Enables a host.
 	 * 
@@ -188,17 +190,31 @@ public class OpenNebulaConnection {
 	 * @return
 	 */
 	public OneResponse enableHost() {
-		hostPool.info();
-		Iterator<Host> it = hostPool.iterator();
-		
-		while (it.hasNext()) {
-			Host h = it.next();
-			if (!h.isEnabled()) {
-				return h.enable();
+		OneResponse res = hostPool.info();
+
+		if (!res.isError()) {
+			HashMap<Integer, HashMap<String, String>> parsedXML = XMLParser
+					.parseXMLString(res.getMessage());
+			for (int key : parsedXML.keySet()) {
+				// HashMap<String, String> host = parsedXML.get(key);
+				if (!this.getHost(key).isEnabled()) {
+					return this.getHost(key).enable();
+				}
 			}
 		}
-		
-		return null;
+
+		return res;
+
+		// Iterator<Host> it = hostPool.iterator();
+		//
+		// while (it.hasNext()) {
+		// Host h = it.next();
+		// if (!h.isEnabled()) {
+		// return h.enable();
+		// }
+		// }
+		//
+		// return null;
 	}
 
 }
