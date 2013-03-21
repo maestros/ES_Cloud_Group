@@ -6,6 +6,7 @@ package model;
  * 20 March 2013
  * @author Apostolos Giannakidis
  */
+import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -24,6 +25,8 @@ public class DecisionBuilder {
 	{
 		LOG = Logger.getLogger(DecisionBuilder.class.getCanonicalName());
 		LOG.setLevel(Main.getLogLevel());
+		BasicConfigurator.resetConfiguration();
+		BasicConfigurator.configure();
 	}
 	
     private DecisionBuilder() {
@@ -60,7 +63,7 @@ public class DecisionBuilder {
 						break;
 					case OpenNewBlade:
 						try {
-							vmMonitor.enableHost(25);
+							vmMonitor.enableHost();
 						} catch (IllegalMachineStateException e) {
 							LOG.error("EnableHost failed.");
 							e.printStackTrace();
@@ -80,11 +83,12 @@ public class DecisionBuilder {
 						break;
 				}
 	    	}
-	    	CloudClient.setActive(false);
-	    	LOG.info("Active = false");
 		} catch (JSONException e) {
 			e.printStackTrace();
-		}   
+		} finally{
+			CloudClient.setActive(false);
+			LOG.info("Active = false");
+		}
     }
 
 }

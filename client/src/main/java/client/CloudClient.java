@@ -21,7 +21,7 @@ import com.google.gson.Gson;
 
 public class CloudClient {
 	
-	private int PORT = 2111;
+	private int PORT = 2103;
 	private String HOST = "localhost";
     private Socket socket;
     private BufferedReader in;
@@ -77,7 +77,7 @@ public class CloudClient {
             		cloudState.updateState();	//when runs it updates the Cloud state
             		
             		if (active.get()==false){
-            			LOG.info("Sending cloud to server.");
+            			LOG.info("Sending cloud to server. Num of hosts: "+cloudState.getCloud().getBlades().size());
             			sendToServer(cloudState.getCloud());
             			LOG.info("Cloud was sent.");
             		}
@@ -103,7 +103,8 @@ public class CloudClient {
 	            			if (input.equals("[]"))
 	            				continue;
 	            			
-	            			LOG.info("Received: "+input);
+	            			LOG.info("Received action");
+	            			LOG.info(input);
 	            			decisionBuilder.makeDecision(new JSONArray(input));
 	            		}
 	            		Thread.sleep(100);
@@ -132,6 +133,7 @@ public class CloudClient {
     	try {
     		if (socket.isConnected()){
     			s = gson.toJson(cloud);
+    			LOG.info(s);
     			out.write(s);
     			out.newLine();
     			out.flush();
