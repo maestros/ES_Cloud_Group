@@ -187,9 +187,18 @@ public class OpenNebulaConnection {
 	 * @param hostID
 	 * @return
 	 */
-	public OneResponse enableHost(int hostID) {
+	public OneResponse enableHost() {
 		hostPool.info();
-		return hostPool.getById(hostID).enable();
+		Iterator<Host> it = hostPool.iterator();
+		
+		while (it.hasNext()) {
+			Host h = it.next();
+			if (!h.isEnabled()) {
+				return h.enable();
+			}
+		}
+		
+		return null;
 	}
 
 }

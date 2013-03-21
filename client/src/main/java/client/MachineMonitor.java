@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import model.DecisionBuilder;
 
@@ -14,8 +15,9 @@ import org.opennebula.client.vm.VirtualMachine;
 
 /**
  * MachineMonitor
- *
+ * 
  * 18 March 2013
+ * 
  * @author Alex Darer
  */
 
@@ -281,15 +283,26 @@ public class MachineMonitor {
 	 * @return
 	 * @throws IllegalMachineStateException
 	 */
-	public boolean enableHost(int hostID) throws IllegalMachineStateException {
-		OneResponse res = conn.enableHost(hostID);
+	public int enableHost() throws IllegalMachineStateException {
+		OneResponse res = conn.enableHost();
 
-		if (res.isError()) {
+		if (res == null) {
+			throw new IllegalMachineStateException(
+					"Host could not be enabled: no disabled hosts exist.");
+		} else if (res.isError()) {
 			throw new IllegalMachineStateException(
 					"Host could not be enabled: " + res.getErrorMessage());
 		}
 
-		return true;
+		HashMap<Integer, HashMap<String, String>> parsedXML = XMLParser
+				.parseXMLString(res.getMessage());
+		Set<Integer> enabledHosts = parsedXML.keySet();
+
+		if (enabledHosts.size() > 0) {
+			return enabledHosts.toArray(new Integer[enabledHosts.size()])[0];
+		} else {
+			return -1;
+		}
 	}
 
 	/**
