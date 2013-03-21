@@ -374,7 +374,7 @@ public class MachineMonitor {
 			this.HOSTID = HOSTID;
 			this.enabled = enabled;
 
-			this.cpuUsage = cpuUsage;
+			this.cpuUsage = cpuUsage / 4.0;
 			this.ramUsage = ramUsage;
 			this.hdUsage = hdUsage;
 
