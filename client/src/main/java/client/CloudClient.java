@@ -7,7 +7,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import model.Cloud;
-import model.DecisionBuilder;
 import org.apache.log4j.*;
 import org.json.JSONArray;
 import com.google.gson.Gson;
@@ -31,7 +30,7 @@ public class CloudClient {
 	private static CloudState cloudState;
 	private static DecisionBuilder decisionBuilder;
 	private Gson gson = null;
-    private static final int EXECUTOR_DELAY = 10000;	//CONSTANT, 10 seconds
+    private static final int EXECUTOR_DELAY = 2000;	//CONSTANT, 10 seconds
     private static ScheduledExecutorService updateStateExecutor;	//the reference for the Game State thread executor
     private static final AtomicBoolean active = new AtomicBoolean(false);
     

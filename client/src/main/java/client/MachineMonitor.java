@@ -6,7 +6,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import model.DecisionBuilder;
 
 import org.apache.log4j.Logger;
 import org.opennebula.client.OneResponse;
@@ -141,12 +140,22 @@ public class MachineMonitor {
 					throw new IllegalMachineStateException("VM: " + key
 							+ " DOES NOT EXIST");
 				} else {
-					vmStates.add(new MachineState(key, Long.parseLong(vmState
-							.get(VM_HOST_ID)), true, Double.parseDouble(vmState
-							.get(VM_CPU_USAGE)), Double.parseDouble(vmState
-							.get(VM_RAM_USAGE)), Double.parseDouble(vmState
-							.get(VM_HD_USAGE)), -1.0, -1.0, -1.0, -1.0, -1.0,
-							-1.0));
+					Long hostId=null;
+					
+					try{
+						hostId = Long.parseLong(vmState.get(VM_HOST_ID));
+					}
+					catch(NumberFormatException e){
+						LOG.error("HostId="+hostId);
+					}
+					
+					if (hostId!=null){
+						vmStates.add(new MachineState(key, hostId, true, Double.parseDouble(vmState
+								.get(VM_CPU_USAGE)), Double.parseDouble(vmState
+								.get(VM_RAM_USAGE)), Double.parseDouble(vmState
+								.get(VM_HD_USAGE)), -1.0, -1.0, -1.0, -1.0, -1.0,
+								-1.0));
+					}
 				}
 			}
 		}
@@ -374,7 +383,7 @@ public class MachineMonitor {
 			this.HOSTID = HOSTID;
 			this.enabled = enabled;
 
-			this.cpuUsage = cpuUsage / 4.0;
+			this.cpuUsage = cpuUsage / 400.0;
 			this.ramUsage = ramUsage;
 			this.hdUsage = hdUsage;
 

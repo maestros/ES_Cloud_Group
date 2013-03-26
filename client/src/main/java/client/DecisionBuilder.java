@@ -1,4 +1,4 @@
-package model;
+package client;
 
 /**
  * Decision Builder
@@ -6,16 +6,14 @@ package model;
  * 20 March 2013
  * @author Apostolos Giannakidis
  */
+import model.Decisions;
+
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import client.CloudClient;
-import client.IllegalMachineStateException;
-import client.MachineMonitor;
-import client.Main;
 
 public class DecisionBuilder {
     private static DecisionBuilder _instance = new DecisionBuilder();
@@ -51,15 +49,22 @@ public class DecisionBuilder {
 				
 				switch(decision){
 					case Move:
-						bladeId = Integer.parseInt(rec.getString("BladeID"));
 						vmID = Integer.parseInt(rec.getString("VmID"));
 						toId = Integer.parseInt(rec.getString("ToBladeID"));
 						try {
+							vmMonitor.enableHost();
 							vmMonitor.migrateVM(vmID, toId, true);
 						} catch (IllegalMachineStateException e) {
 							LOG.error("Move VM failed.");
 							e.printStackTrace();
 						}
+						
+						try {
+							Thread.sleep(60000);
+						} catch (InterruptedException e1) {
+							e1.printStackTrace();
+						}
+						
 						break;
 					case OpenNewBlade:
 						try {
@@ -69,7 +74,7 @@ public class DecisionBuilder {
 							e.printStackTrace();
 						}
 						break;
-					case ShutDownBlade:
+					case ShutdownBlade:
 						try {
 							bladeId = Integer.parseInt(rec.getString("BladeID"));
 							vmMonitor.disableHost(bladeId);
@@ -81,6 +86,11 @@ public class DecisionBuilder {
 					default:
 						LOG.error("Unknown action");
 						break;
+				}
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
 				}
 	    	}
 		} catch (JSONException e) {
